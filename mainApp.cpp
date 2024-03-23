@@ -144,7 +144,7 @@ void flipped()
     char x;
     cout << "which flip do u want\nA)flip vetical\nB)flip Horizontal\n";
     cin >> x;
-    while ((x != 'a') and (x != 'b') and (x != 'A') and (x != 'B'))
+    while ((x != "a") and (x != "b") and (x != "A") and (x != "B"))
     {
         cout << "\nplease enter valid char\nwhich flip do u want\nA)flip vetical\nB)flip Horizontal\n";
         cin >> x;
@@ -175,7 +175,7 @@ void flipped()
             for (int k = 0; k < 3; ++k)
             {
                 int temp;
-                if (x == 'a' or x == 'A')
+                if (x == "a" or x == "A")
                 {
                     // if temp = i that flip vertical
                     temp = i;
