@@ -234,6 +234,38 @@ void merge()
     // cout<<merged.width<<" "<<merged.height;
 }
 
+void crop() {
+    int x, y;
+    cout << "Enter x and y input as the starting point:\n ";
+    cin >> x >> y;
+
+    int w, h;
+    cout << "Enter w and h as the dimensions of the area to cut:\n ";
+    cin >> w >> h;
+
+    string filename;
+    cout << "Please enter the image name to be cropped:\n ";
+    cin >> filename;
+
+    Image image(filename);
+
+    Image image2(w, h);  // Create a new image to store the cropped region
+
+    for (int i = 0; i < w; ++i) {
+        for (int j = 0; j < h; ++j) {
+            for (int k = 0; k < 3; ++k) {
+                // Copy pixel values from the original image to the cropped image
+                image2(i, j, k) = image(x + i, y + j, k);
+            }
+        }
+    }
+
+    cout << "Please enter the image name to store the new image\n";
+    cout << "and specify extension .jpg, .bmp, .png, .tga: ";
+    cin >> filename;
+    image2.saveImage(filename);
+}
+
 int main()
 {
 
