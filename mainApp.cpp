@@ -1,5 +1,6 @@
 // main app to add filters to images
 #include <iostream>
+#include <cmath>
 #include "Image_Class.h"
 using namespace std;
 
@@ -79,7 +80,7 @@ void lighten()
         {
             for (int k = 0; k < 3; ++k)
             {
-                unsigned int rqm = image(i, j, k) * .5;
+                unsigned int rqm = 20;
                 if (image(i, j, k) + rqm < 255)
                 {
                     image(i, j, k) += rqm;
@@ -94,33 +95,41 @@ void lighten()
     cin >> filename;
     image.saveImage(filename);
 }
-void blackandwhite() {
-    
-    //take image name
+
+void blackandwhite()
+{
+
+    // take image name
     string filename;
     cout << "Pls enter colored image name to turn to blackandwhite: ";
     cin >> filename;
     Image image(filename);
 
-    //for loop that make the image blackandwhite
-    for (int i = 0; i < image.width; ++i) {
-        for (int j = 0; j < image.height; ++j) {
-            unsigned  int avg = 0; 
-            //for loop that sum every pixels three colors 
-            for (int k = 0; k < 3; ++k) {
-                avg += image(i, j, k); 
+    // for loop that make the image blackandwhite
+    for (int i = 0; i < image.width; ++i)
+    {
+        for (int j = 0; j < image.height; ++j)
+        {
+            unsigned int avg = 0;
+            // for loop that sum every pixels three colors
+            for (int k = 0; k < 3; ++k)
+            {
+                avg += image(i, j, k);
             }
             avg /= 3; // Calculate average
-            for (int k = 0; k < 3; ++k) {
-                if (avg >= 128){
-                    //if sum pf every pixels three colors > 128 make the pixel white
-                    image(i, j, k)=255;
+            for (int k = 0; k < 3; ++k)
+            {
+                if (avg >= 128)
+                {
+                    // if sum pf every pixels three colors > 128 make the pixel white
+                    image(i, j, k) = 255;
                 }
-                else{
-                    image(i, j, k)=0;
-                    //if sum pf every pixels three colors > 128 make the pixel black
+                else
+                {
+                    image(i, j, k) = 0;
+                    // if sum pf every pixels three colors > 128 make the pixel black
                 }
-            } 
+            }
         }
     }
     cout << "Pls enter image name to store new image\n";
@@ -128,16 +137,19 @@ void blackandwhite() {
     cin >> filename;
     image.saveImage(filename);
 }
-void flipped() {
-    //take char from user and make sure that he choose valid 
+
+void flipped()
+{
+    // take char from user and make sure that he choose valid
     char x;
-    cout<<"which flip do u want\nA)flip vetical\nB)flip Horizontal\n";
-    cin>>x;
-    while((x !='a') and (x !='b') and (x!='A') and (x!='B')){
-        cout<<"\nplease enter valid char\nwhich flip do u want\nA)flip vetical\nB)flip Horizontal\n";
-        cin>>x;
+    cout << "which flip do u want\nA)flip vetical\nB)flip Horizontal\n";
+    cin >> x;
+    while ((x != 'a') and (x != 'b') and (x != 'A') and (x != 'B'))
+    {
+        cout << "\nplease enter valid char\nwhich flip do u want\nA)flip vetical\nB)flip Horizontal\n";
+        cin >> x;
     }
-    //take image name
+    // take image name
     string filename;
     cout << "Pls enter image name to be flipped : ";
     cin >> filename;
@@ -145,27 +157,36 @@ void flipped() {
 
     // image2 is a white copy photo from the orignal that we will ass pixel pixel from orignal to image2
     Image image2(filename);
-    for (unsigned int i = 0; i < image.width; ++i) {
-        for (unsigned int j = 0; j < image.height; ++j) {
-            for (int k = 0; k < 3; ++k) {
-               image2(i, j, k)=255; 
+    for (unsigned int i = 0; i < image.width; ++i)
+    {
+        for (unsigned int j = 0; j < image.height; ++j)
+        {
+            for (int k = 0; k < 3; ++k)
+            {
+                image2(i, j, k) = 255;
             }
         }
     }
-    //for loop that flip every pixel then add it to image to 
-    for (unsigned int i = 0; i < image.width; ++i) {
-        for (unsigned int j = 0; j < image.height; ++j) {
-            for (int k = 0; k < 3; ++k) {
-               int temp;
-               if(x=='a' or x=='A'){
-                    //if temp = i that flip vertical
-                    temp=i;
-               }else{
-                    //if temp = i that flip horizontal
-                    temp=image.width-i-1;
-               }
-               //add every  flipped pixel from orignal image to image2 
-               image2(i, j, k)=image(temp,image.height-j-1,k); 
+    // for loop that flip every pixel then add it to image to
+    for (unsigned int i = 0; i < image.width; ++i)
+    {
+        for (unsigned int j = 0; j < image.height; ++j)
+        {
+            for (int k = 0; k < 3; ++k)
+            {
+                int temp;
+                if (x == 'a' or x == 'A')
+                {
+                    // if temp = i that flip vertical
+                    temp = i;
+                }
+                else
+                {
+                    // if temp = i that flip horizontal
+                    temp = image.width - i - 1;
+                }
+                // add every  flipped pixel from orignal image to image2
+                image2(i, j, k) = image(temp, image.height - j - 1, k);
             }
         }
     }
@@ -175,9 +196,46 @@ void flipped() {
     image2.saveImage(filename);
 }
 
+void merge()
+{
+    string fileName;
+    cout << "enter the first image to merge: ";
+    cin >> fileName;
+    Image img1(fileName);
+    cout << "enter the second image to merge: ";
+    cin >> fileName;
+    Image img2(fileName);
+    int minW, minH;
+    minW = min(img1.width, img2.width);
+    minH = min(img1.height, img2.height);
+
+    Image merged(minW, minH);
+    int s1, s2, s3, s4;
+    s1 = img1.width - minW;
+    s2 = img1.height - minH;
+    s3 = img2.width - minW;
+    s4 = img2.height - minH;
+    for (int i = 0; i < merged.width; i++)
+    {
+        for (int j = 0; j < merged.height; j++)
+        {
+            for (int k = 0; k < 3; k++)
+            {
+                merged(i, j, k) = (img1(i + s1, j + s2, k) + img2(i + s3, j + s4, k)) / 2;
+            }
+        }
+    }
+
+    cout << "Pls enter image name to store new image\n";
+    cout << "and specify extension .jpg, .bmp, .png, .tga: ";
+
+    cin >> fileName;
+    merged.saveImage(fileName);
+    // cout<<merged.width<<" "<<merged.height;
+}
 
 int main()
 {
-    
+
     return 0;
 }
