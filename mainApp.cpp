@@ -4,47 +4,38 @@
 #include "Image_Class.h"
 using namespace std;
 
-void grayScaling()
+void save(Image sora)
 {
-    string filename;
-    cout << "Pls enter colored image name to turn to gray scale: ";
-    cin >> filename;
+    string name;
+    cout << "enter the saving name with the extention to save the image: ";
+    cin >> name;
+    sora.saveImage(name);
+}
 
+void grayScaling(string filename)
+{
     Image image(filename);
-
     for (int i = 0; i < image.width; ++i)
     {
         for (int j = 0; j < image.height; ++j)
         {
-            unsigned int avg = 0; // Initialize average value
-
+            unsigned int avg = 0;
             for (int k = 0; k < 3; ++k)
             {
-                avg += image(i, j, k); // Accumulate pixel values
+                avg += image(i, j, k);
             }
-
-            avg /= 3; // Calculate average
-
-            // Set all channels to the average value
-            image(i, j, 0) = avg;
-            image(i, j, 1) = avg;
-            image(i, j, 2) = avg;
+            avg /= 3;
+            for (int k = 0; k < 3; ++k)
+            {
+                image(i, j, k) = avg;
+            }
         }
     }
-
-    cout << "Pls enter image name to store new image\n";
-    cout << "and specify extension .jpg, .bmp, .png, .tga: ";
-
-    cin >> filename;
-    image.saveImage(filename);
+    save(image);
 }
 
-void darken()
+void darken(string filename)
 {
-    string filename;
-    cout << "Pls enter colored image name to turn to darken: ";
-    cin >> filename;
-
     Image image(filename);
 
     for (int i = 0; i < image.width; ++i)
@@ -58,20 +49,11 @@ void darken()
             }
         }
     }
-
-    cout << "Pls enter image name to store new image\n";
-    cout << "and specify extension .jpg, .bmp, .png, .tga: ";
-
-    cin >> filename;
-    image.saveImage(filename);
+    save(image);
 }
 
-void lighten()
+void lighten(string filename)
 {
-    string filename;
-    cout << "Pls enter colored image name to turn to lighten: ";
-    cin >> filename;
-
     Image image(filename);
 
     for (int i = 0; i < image.width; ++i)
@@ -88,21 +70,11 @@ void lighten()
             }
         }
     }
-
-    cout << "Pls enter image name to store new image\n";
-    cout << "and specify extension .jpg, .bmp, .png, .tga: ";
-
-    cin >> filename;
-    image.saveImage(filename);
+    save(image);
 }
 
-void blackandwhite()
+void blackandwhite(string filename)
 {
-
-    // take image name
-    string filename;
-    cout << "Pls enter colored image name to turn to blackandwhite: ";
-    cin >> filename;
     Image image(filename);
 
     // for loop that make the image blackandwhite
@@ -132,34 +104,28 @@ void blackandwhite()
             }
         }
     }
-    cout << "Pls enter image name to store new image\n";
-    cout << "and specify extension .jpg, .bmp, .png, .tga: ";
-    cin >> filename;
-    image.saveImage(filename);
+    save(image);
 }
 
-void flipped()
+void flipped(string filename)
 {
     // take char from user and make sure that he choose valid
     char x;
     cout << "which flip do u want\nA)flip vetical\nB)flip Horizontal\n";
     cin >> x;
-    while ((x != "a") and (x != "b") and (x != "A") and (x != "B"))
+    while ((x != 'a') and (x != 'b') and (x != 'A') and (x != 'B'))
     {
         cout << "\nplease enter valid char\nwhich flip do u want\nA)flip vetical\nB)flip Horizontal\n";
         cin >> x;
     }
-    // take image name
-    string filename;
-    cout << "Pls enter image name to be flipped : ";
-    cin >> filename;
+
     Image image(filename);
 
-    // image2 is a white copy photo from the orignal that we will ass pixel pixel from orignal to image2
-    Image image2(filename);
-    for (unsigned int i = 0; i < image.width; ++i)
+    // image2 is a white copy photo from the orignal that we will pass pixel pixel from orignal to image2
+    Image image2(image.width, image.height);
+    for (unsigned int i = 0; i < image2.width; ++i)
     {
-        for (unsigned int j = 0; j < image.height; ++j)
+        for (unsigned int j = 0; j < image2.height; ++j)
         {
             for (int k = 0; k < 3; ++k)
             {
@@ -175,7 +141,7 @@ void flipped()
             for (int k = 0; k < 3; ++k)
             {
                 int temp;
-                if (x == "a" or x == "A")
+                if (x == 'a' || x == 'A')
                 {
                     // if temp = i that flip vertical
                     temp = i;
@@ -190,17 +156,11 @@ void flipped()
             }
         }
     }
-    cout << "Pls enter image name to store new image\n";
-    cout << "and specify extension .jpg, .bmp, .png, .tga: ";
-    cin >> filename;
-    image2.saveImage(filename);
+    save(image2);
 }
 
-void merge()
+void merge(string fileName)
 {
-    string fileName;
-    cout << "enter the first image to merge: ";
-    cin >> fileName;
     Image img1(fileName);
     cout << "enter the second image to merge: ";
     cin >> fileName;
@@ -226,15 +186,11 @@ void merge()
         }
     }
 
-    cout << "Pls enter image name to store new image\n";
-    cout << "and specify extension .jpg, .bmp, .png, .tga: ";
-
-    cin >> fileName;
-    merged.saveImage(fileName);
-    // cout<<merged.width<<" "<<merged.height;
+    save(merged);
 }
 
-void crop() {
+void crop(string filename)
+{
     int x, y;
     cout << "Enter x and y input as the starting point:\n ";
     cin >> x >> y;
@@ -243,31 +199,105 @@ void crop() {
     cout << "Enter w and h as the dimensions of the area to cut:\n ";
     cin >> w >> h;
 
-    string filename;
-    cout << "Please enter the image name to be cropped:\n ";
     cin >> filename;
 
     Image image(filename);
 
-    Image image2(w, h);  // Create a new image to store the cropped region
+    Image image2(w, h); // Create a new image to store the cropped region
 
-    for (int i = 0; i < w; ++i) {
-        for (int j = 0; j < h; ++j) {
-            for (int k = 0; k < 3; ++k) {
+    for (int i = 0; i < w; ++i)
+    {
+        for (int j = 0; j < h; ++j)
+        {
+            for (int k = 0; k < 3; ++k)
+            {
                 // Copy pixel values from the original image to the cropped image
                 image2(i, j, k) = image(x + i, y + j, k);
             }
         }
     }
 
-    cout << "Please enter the image name to store the new image\n";
-    cout << "and specify extension .jpg, .bmp, .png, .tga: ";
-    cin >> filename;
-    image2.saveImage(filename);
+    save(image2);
+}
+
+void edges(string fileName)
+{
+    Image img(fileName);
+
+    for (int i = 0; i < img.width; ++i)
+    {
+        for (int j = 0; j < img.height; ++j)
+        {
+            unsigned int avg = 0;
+            for (int k = 0; k < 3; ++k)
+            {
+                avg += img(i, j, k);
+            }
+            avg /= 3;
+            for (int k = 0; k < 3; ++k)
+            {
+                if (avg >= 128)
+                {
+                    img(i, j, k) = 255;
+                }
+                else
+                {
+                    img(i, j, k) = 0;
+                }
+            }
+        }
+    }
+
+    int cnt = 0;
+    for (int i = 1; i < img.width - 1; ++i)
+    {
+        for (int j = 1; j < img.height - 1; ++j)
+        {
+            if (img(i, j, 0) < 128)
+            {
+                int cnt = 0;
+                if (img(i - 1, j, 0) < 128)
+                {
+                    cnt++;
+                }
+                if (img(i, j + 1, 0) < 128)
+                {
+                    cnt++;
+                }
+                if (img(i + 1, j, 0) < 128)
+                {
+                    cnt++;
+                }
+                if (img(i, j - 1, 0) < 128)
+                {
+                    cnt++;
+                }
+                if (cnt == 4)
+                {
+                    for (int k = 0; k < 3; k++)
+                    {
+                        img(i, j, 1) = 255;
+                    }
+                }
+            }
+        }
+    }
+    for (int i = 0; i < img.width; ++i)
+    {
+        for (int j = 0; j < img.height; ++j)
+        {
+            if (img(i, j, 1) > 150)
+            {
+                img(i, j, 0) = 255;
+                img(i, j, 2) = 255;
+            }
+        }
+    }
+    save(img);
 }
 
 int main()
 {
-
+    
     return 0;
 }
