@@ -298,6 +298,99 @@ void edges(string fileName)
 
 int main()
 {
-    
+
+    while (true)
+    {
+        cout << "\nWelcome to our program **PhotoKoshk**\n";
+
+        string choice;
+        cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)\nJ)\n";
+        getline(cin, choice);
+        cout << "\n";
+        choice[0] = tolower(choice[0]);
+        string validChoice = "abcdefghijk";
+        while (!(validChoice.find(choice) < validChoice.length()) || (choice.length() != 1))
+        {
+            cout << "Please insert a valid char:\n";
+            getline(cin, choice);
+            choice[0] = tolower(choice[0]);
+        }
+        // ============================================ //
+        string fileName;
+        while (true)
+        {
+            cout << "Enter the image name you want to do:\n";
+            cin >> fileName;
+            Image test;
+            try
+            {
+                test.loadNewImage(fileName);
+                break;
+            }
+            catch (const std::exception &e)
+            {
+                cout << "Error: unvalid image name... Please write right image name\n";
+            }
+        }
+
+        if (choice == "a")
+        {
+            grayScaling(fileName);
+        }
+        else if (choice == "b")
+        {
+            darken(fileName);
+        }
+        else if (choice == "c")
+        {
+            lighten(fileName);
+        }
+        else if (choice == "d")
+        {
+            blackandwhite(fileName);
+        }
+        else if (choice == "e")
+        {
+            flipped(fileName);
+        }
+        else if (choice == "f")
+        {
+            merge(fileName);
+        }
+        else if (choice == "g")
+        {
+            crop(fileName);
+        }
+        else if (choice == "h")
+        {
+            edges(fileName);
+        }
+        else if (choice == "i")
+        {
+            cout << choice;
+        }
+        else if (choice == "j")
+        {
+            cout << choice;
+        }
+
+        cout << "\nthank you for using our program\nA)Again\nB)Exit\n";
+        string goOut;
+        cin.ignore();
+        getline(cin, goOut);
+        cout << "\n";
+        goOut[0] = tolower(goOut[0]);
+        while (goOut != "a" && goOut != "b" || (goOut.length() != 1))
+        {
+            cout << "Please insert a valid char\nA)Again\nB)Exit\n";
+            getline(cin, goOut);
+            goOut[0] = tolower(goOut[0]);
+        }
+        if (goOut == "b")
+        {
+            break;
+        }
+    }
+    cout << "Bye :)";
     return 0;
 }
