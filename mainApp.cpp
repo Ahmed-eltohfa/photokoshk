@@ -296,6 +296,93 @@ void edges(string fileName)
     save(img);
 }
 
+
+void ResizingImages() {
+    //take image name and save it 
+    string filename;
+    cout << "Enter the filename of the image: ";
+    cin >> filename;
+    Image image(filename);
+    cout << "\nImage loaded successfully.\n" << endl;
+
+    //take choice from user to Enter new dimensions or Enter ratio of reduction/increase
+    string choice;
+    cout << "Choose resizing option:\nA) Enter new dimensions\nB) Enter ratio of reduction/increase\nEnter your choice: " << endl;
+    cin >> choice;
+    //make sure that choice valid
+    while(choice != "A" and choice != "a" and choice != "B" and choice != "b"){
+        cout << "Pls enter valid option\nA) Enter new dimensions\nB) Enter ratio of reduction/increase\nEnter your choice:  " << endl;
+        cin >> choice;
+    }
+    
+    //if choice = a user Enter new dimensions else user Enter ratio of reduction/increase
+    if (choice == "A" or choice == "a") {
+
+        //define and take new width and height
+        int newWidth, newHeight;
+        cout << "Enter new width and new height: ";
+        cin >> newWidth >> newHeight;
+        //make new photo that have the new dimensions
+        Image resizedImage(newWidth, newHeight);
+
+        //for loop that edit and take every pixel to new photo
+        for (int y = 0; y < newHeight; y++) {
+            for (int x = 0; x < newWidth; x++) {
+                int srcX = static_cast<int>(x * static_cast<float>(image.width) / newWidth);
+                int srcY = static_cast<int>(y * static_cast<float>(image.height) / newHeight);
+                
+                // change the dimensions and doesnot change the color
+                for (int c = 0; c < image.channels; c++) {
+                    resizedImage(x, y, c) = image(srcX, srcY, c);
+                }
+            }
+        }
+
+        //save image
+        string outputFilename;
+        cout << "Enter the output filename: ";
+        cin >> outputFilename;
+        cout << "Image saved successfully." << endl;
+        resizedImage.saveImage(outputFilename);
+
+
+    } else {
+
+        //take ratio of reduction/increase
+        float ratio;
+        cout << "Enter the ratio of reduction/increase: ";
+        cin >> ratio;
+
+        //set new Width and Height
+        int newWidth = static_cast<int>(image.width * ratio);
+        int newHeight = static_cast<int>(image.height * ratio);
+
+        //make new photo that have the new dimensions
+        Image resizedImage(newWidth, newHeight);
+        
+        //for loop that edit and take every pixel to new photo
+        for (int y = 0; y < newHeight; y++) {
+            for (int x = 0; x < newWidth; x++) {
+                int srcX = static_cast<int>(x / ratio);
+                int srcY = static_cast<int>(y / ratio);
+
+                // change the dimensions and doesnot change the color
+                for (int c = 0; c < image.channels; c++) {
+                    resizedImage(x, y, c) = image(srcX, srcY, c);
+                }
+            }
+        }
+        //save image
+        string outputFilename;
+        cout << "Enter the output filename: ";
+        cin >> outputFilename;
+        cout << "Image saved successfully." << endl;
+        resizedImage.saveImage(outputFilename);
+        
+    }  
+}
+
+
 int main()
 {
 
