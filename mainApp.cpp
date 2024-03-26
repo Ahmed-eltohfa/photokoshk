@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cmath>
 #include "Image_Class.h"
+#include <string>
 using namespace std;
 
 void save(Image sora)
@@ -110,13 +111,14 @@ void blackandwhite(string filename)
 void flipped(string filename)
 {
     // take char from user and make sure that he choose valid
-    char x;
-    cout << "which flip do u want\nA)flip vetical\nB)flip Horizontal\n";
-    cin >> x;
-    while ((x != 'a') and (x != 'b') and (x != 'A') and (x != 'B'))
+    string x;
+    cout << "which flip do u want\nA)Vetical flip\nB)Horizontal flip\n";
+    getline(cin,x);
+    cin.ignore();
+    while ((x != "a") && (x != "b") && (x != "A") && (x != "B"))
     {
-        cout << "\nplease enter valid char\nwhich flip do u want\nA)flip vetical\nB)flip Horizontal\n";
-        cin >> x;
+        cout << "\nplease enter valid char\nwhich flip do u want\nA)vetical flip\nB)Horizontal flip\n";
+        getline(cin,x);
     }
 
     Image image(filename);
@@ -141,7 +143,7 @@ void flipped(string filename)
             for (int k = 0; k < 3; ++k)
             {
                 int temp;
-                if (x == 'a' || x == 'A')
+                if (x == "a" || x == "A")
                 {
                     // if temp = i that flip vertical
                     temp = i;
@@ -198,9 +200,6 @@ void crop(string filename)
     int w, h;
     cout << "Enter w and h as the dimensions of the area to cut:\n ";
     cin >> w >> h;
-
-    cin >> filename;
-
     Image image(filename);
 
     Image image2(w, h); // Create a new image to store the cropped region
@@ -303,15 +302,16 @@ void ResizingImages(string filename) {
     //take choice from user to Enter new dimensions or Enter ratio of reduction/increase
     string choice;
     cout << "Choose resizing option:\nA) Enter new dimensions\nB) Enter ratio of reduction/increase\nEnter your choice: " << endl;
-    cin >> choice;
+    getline(cin,choice);
+    cin.ignore();
     //make sure that choice valid
-    while(choice != "A" and choice != "a" and choice != "B" and choice != "b"){
-        cout << "Pls enter valid option\nA) Enter new dimensions\nB) Enter ratio of reduction/increase\nEnter your choice:  " << endl;
-        cin >> choice;
+    while(choice != "A" && choice != "a" && choice != "B" && choice != "b"){
+        cout << "\nPls enter valid option\nA) Enter new dimensions\nB) Enter ratio of reduction/increase\nEnter your choice:  " << endl;
+        getline(cin,choice);
     }
     
     //if choice = a user Enter new dimensions else user Enter ratio of reduction/increase
-    if (choice == "A" or choice == "a") {
+    if (choice == "A" || choice == "a") {
 
         //define and take new width and height
         int newWidth, newHeight;
@@ -333,7 +333,7 @@ void ResizingImages(string filename) {
             }
         }
 
-        save(image);
+        save(resizedImage);
 
 
     } else {
@@ -362,12 +362,7 @@ void ResizingImages(string filename) {
                 }
             }
         }
-        //save image
-        string outputFilename;
-        cout << "Enter the output filename: ";
-        cin >> outputFilename;
-        cout << "Image saved successfully." << endl;
-        resizedImage.saveImage(outputFilename);
+        save(resizedImage);
         
     }  
 } 
@@ -422,7 +417,7 @@ void frame_filter(string filename){
     if(charr=="A"){
         for (int i = 0; i < image.width; ++i){
             for (int j = 0; j < image.height; ++j){
-                if(i<=20i>=image.width-21j<=20j>=image.height-21){
+                if(i<=20||i>=image.width-21||j<=20||j>=image.height-21){
                     for (int k = 0; k < 3; ++k) {
                         image(i, j, k)=255;
                     }
@@ -433,12 +428,12 @@ void frame_filter(string filename){
     }else if(charr=="B"){
         for (int i = 0; i < image.width; ++i){
             for (int j = 0; j < image.height; ++j){
-                if(i<=20i>=image.width-21j<=20j>=image.height-21){
+                if(i<=20||i>=image.width-21||j<=20||j>=image.height-21){
                     for (int k = 0; k < 3; ++k) {
                         image(i, j, k)=255;
                     }
                 }
-                if(i==0i==5i==10i==image.width-1i==image.width-6i==image.width-11j==0j==5j==10j==image.height-1j==image.height-6||j==image.height-11){
+                if(i==0||i==5||i==10||i==image.width-1||i==image.width-6||i==image.width-11||j==0||j==5||j==10||j==image.height-1||j==image.height-6||j==image.height-11){
                     for (int k = 0; k < 3; ++k) {
                         image(i, j, k)=0;
                     }
@@ -529,7 +524,7 @@ void rotate(string filename){
         }
         save(image2);
     }
-
+}
 void invert(string filename){
     Image image(filename);
     for (int i = 0; i < image.width; ++i) {
@@ -548,14 +543,14 @@ int main()
 
     while (true)
     {
-        cout << "\nWelcome to our program **PhotoKoshk**\n";
+        cout << "\nWelcome to our program *PhotoKoshk*\n";
 
         string choice;
-        cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)Resizing Image\nJ)Blur Image\nk)frame image\nl)Rotate Image\nm)Invert Image: ";
+        cout << "Choose one of these filters:\nA)grayScaling\nB)Darken\nC)Lighten\nD)Black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)Resizing Image\nJ)Blur Image\nK)frame image\nL)Rotate Image\nM)Invert Image\n";
         getline(cin, choice);
         cout << "\n";
         choice[0] = tolower(choice[0]);
-        string validChoice = "abcdefghijk";
+        string validChoice = "abcdefghijklm";
         while (!(validChoice.find(choice) < validChoice.length()) || (choice.length() != 1))
         {
             cout << "Please insert a valid char:\n";
