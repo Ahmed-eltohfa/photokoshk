@@ -297,14 +297,9 @@ void edges(string fileName)
 }
 
 
-void ResizingImages() {
-    //take image name and save it 
-    string filename;
-    cout << "Enter the filename of the image: ";
-    cin >> filename;
+void ResizingImages(string filename) {
     Image image(filename);
-    cout << "\nImage loaded successfully.\n" << endl;
-
+    
     //take choice from user to Enter new dimensions or Enter ratio of reduction/increase
     string choice;
     cout << "Choose resizing option:\nA) Enter new dimensions\nB) Enter ratio of reduction/increase\nEnter your choice: " << endl;
@@ -338,12 +333,7 @@ void ResizingImages() {
             }
         }
 
-        //save image
-        string outputFilename;
-        cout << "Enter the output filename: ";
-        cin >> outputFilename;
-        cout << "Image saved successfully." << endl;
-        resizedImage.saveImage(outputFilename);
+        save(image);
 
 
     } else {
@@ -380,6 +370,176 @@ void ResizingImages() {
         resizedImage.saveImage(outputFilename);
         
     }  
+} 
+
+void blur(string filename){
+    Image image(filename);
+    int n;
+    cout<<"\nenter the level of blur from 1 to 10: ";
+    cin>>n;
+    int level=1;
+    if(n<0||n>10){
+        cout<<"different level Please\n";
+        cin>>n;
+    }
+    while (level<=n){
+        for(int i=1;i<image.width-1;i+=2){
+            for(int j=1;j<image.height-1;j+=2){
+                for(int k=0;k<3;k++){
+                    int avg=(image(i-1,j,k)+image(i+1,j,k)+image(i,j-1,k)+image(i,j+1,k)+image(i-1,j-1,k)+image(i+1,j+1,k)+image(i-1,j+1,k)+image(i+1,j-1,k)+image(i,j,k)*2)/10;
+                    image(i-1,j,k)=avg;
+                    image(i+1,j,k)=avg;
+                    image(i,j-1,k)=avg;
+                    image(i,j+1,k)=avg;
+                    image(i-1,j-1,k)=avg;
+                    image(i+1,j+1,k)=avg;
+                    image(i-1,j+1,k)=avg;
+                    image(i+1,j-1,k)=avg;
+                    image(i,j,k)=avg;
+                }
+            }
+        }
+        level++;
+    }
+    save(image);
+}
+
+void frame_filter(string filename){
+    cout<<"\nwhice frame do you want\nA)white frame\nB)Zebra frame\n";
+    string charr;
+    getline(cin,charr);
+    while (charr.length()!=1){
+        cout<<"Please just insert one char\n";
+        getline(cin,charr);
+    }
+    charr=toupper(charr[0]);
+    while (charr!="A"&&charr!="B"){
+        cout<<"Please just insert a valid char('A','B')\n";
+        getline(cin,charr);
+        charr=toupper(charr[0]);
+    }
+    Image image(filename);
+    if(charr=="A"){
+        for (int i = 0; i < image.width; ++i){
+            for (int j = 0; j < image.height; ++j){
+                if(i<=20i>=image.width-21j<=20j>=image.height-21){
+                    for (int k = 0; k < 3; ++k) {
+                        image(i, j, k)=255;
+                    }
+                }
+            }
+    }
+    save(image);
+    }else if(charr=="B"){
+        for (int i = 0; i < image.width; ++i){
+            for (int j = 0; j < image.height; ++j){
+                if(i<=20i>=image.width-21j<=20j>=image.height-21){
+                    for (int k = 0; k < 3; ++k) {
+                        image(i, j, k)=255;
+                    }
+                }
+                if(i==0i==5i==10i==image.width-1i==image.width-6i==image.width-11j==0j==5j==10j==image.height-1j==image.height-6||j==image.height-11){
+                    for (int k = 0; k < 3; ++k) {
+                        image(i, j, k)=0;
+                    }
+                }
+            }
+        }
+        save(image);
+    }
+    
+}
+
+void rotate(string filename){
+    cout<<"A)Rotate 90\nB)Rotate 180\nC)Rotate 270\n";
+    string charr;
+    getline(cin,charr);
+    while (charr.length()!=1){
+        cout<<"Please just insert one char\n";
+        getline(cin,charr);
+    }
+    charr=toupper(charr[0]);
+    while (charr!="A"&&charr!="B"&&charr!="C"){
+        cout<<"Please just insert a valid char('A','B','C')\n";
+        getline(cin,charr);
+    }
+    if(charr=="A"){
+        Image image(filename);
+        Image image2(image.height,image.width);
+        for (int i = 0; i < image.height; ++i) {
+            for (int j = 0; j < image.width; ++j) {
+                for (int k = 0; k < 3; ++k){
+                    image2(i, j, k)=255;
+                }
+            }
+        }
+        for (int i = 0; i < image.width; ++i){
+            for (int j = 0; j < image.height; ++j){
+                //for loop that sum every pixels three colors
+                for (int k = 0; k < 3; ++k){
+                    image2(image.height-j-1,i,k)=image(i,j,k);
+                }
+            }
+        }
+        save(image2);
+    }else if(charr=="B"){
+        Image image(filename);
+        Image image2(filename);
+        for (int i = 0; i < image.width; ++i) {
+            for (int j = 0; j < image.height; ++j) {
+                for (int k = 0; k < 3; ++k){
+                    image2(i, j, k)=255;
+                }
+            }
+        }
+        for (int i = 0; i < image.width; ++i){
+            for (int j = 0; j < image.height; ++j){
+                //for loop that sum every pixels three colors
+                for (int k = 0; k < 3; ++k){
+                    image2(image.width-i-1,image.height-j-1,k)=image(i,j,k);
+                }
+            }
+        }
+        save(image2);
+    }else{
+        Image image(filename);
+        Image image2(image.height,image.width);
+        for (int i = 0; i < image.height; ++i) {
+            for (int j = 0; j < image.width; ++j) {
+                for (int k = 0; k < 3; ++k){
+                    image2(i, j, k)=255;
+                }
+            }
+        }
+        for (int i = 0; i < image.width; ++i){
+            for (int j = 0; j < image.height; ++j){
+                //for loop that sum every pixels three colors
+                for (int k = 0; k < 3; ++k){
+                    image2(image.height-j-1,image.width-i-1,k)=image(i,j,k);
+                }
+            }
+        }
+        for (int i = 0; i < image.width; ++i){
+            for (int j = 0; j < image.height; ++j){
+                //for loop that sum every pixels three colors
+                for (int k = 0; k < 3; ++k){
+                    image2(j,image.width-i-1,k)=image(i,j,k);
+                }
+            }
+        }
+        save(image2);
+    }
+
+void invert(string filename){
+    Image image(filename);
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            for (int k = 0; k < 3; ++k) {
+                image(i, j, k)=255-image(i, j, k);
+            }
+        }
+    }
+    save(image);
 }
 
 
@@ -391,7 +551,7 @@ int main()
         cout << "\nWelcome to our program **PhotoKoshk**\n";
 
         string choice;
-        cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)\nJ)\n";
+        cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)Resizing Image\nJ)Blur Image\nk)frame image\nl)Rotate Image\nm)Invert Image\nn)";
         getline(cin, choice);
         cout << "\n";
         choice[0] = tolower(choice[0]);
@@ -454,11 +614,20 @@ int main()
         }
         else if (choice == "i")
         {
-            cout << choice;
+            ResizingImages(fileName);
         }
         else if (choice == "j")
         {
-            cout << choice;
+            blur(fileName);
+        }else if(choice == "k"){
+            
+            frame_filter(fileName);
+        }else if(choice == "l"){
+            rotate(fileName);
+        }else if(choice =="m"){
+            invert(fileName);
+        }else if(choice =="n"){
+            (fileName);
         }
 
         cout << "\nthank you for using our program\nA)Again\nB)Exit\n";
