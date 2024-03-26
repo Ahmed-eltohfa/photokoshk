@@ -551,7 +551,7 @@ int main()
         cout << "\nWelcome to our program **PhotoKoshk**\n";
 
         string choice;
-        cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)Resizing Image\nJ)Blur Image\nk)frame image\nl)Rotate Image\nm)Invert Image\nn)";
+        cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)Resizing Image\nJ)Blur Image\nk)frame image\nl)Rotate Image\nm)Invert Image: ";
         getline(cin, choice);
         cout << "\n";
         choice[0] = tolower(choice[0]);
@@ -626,8 +626,6 @@ int main()
             rotate(fileName);
         }else if(choice =="m"){
             invert(fileName);
-        }else if(choice =="n"){
-            (fileName);
         }
 
         cout << "\nthank you for using our program\nA)Again\nB)Exit\n";
