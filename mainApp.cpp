@@ -2,17 +2,27 @@
 #include <iostream>
 #include <cmath>
 #include "Image_Class.h"
+#include <stdio.h>
 using namespace std;
 
-void save(Image sora)
+void saveImg(Image sora)
 {
     string name;
-    cout << "enter the saving name with the extention to save the image: ";
+point:
+    cout << "enter the saving name with the RIGHT extention to save the image: ";
     cin >> name;
-    sora.saveImage(name);
+    try
+    {
+        sora.saveImage(name);
+    }
+    catch (const std::exception &e)
+    {
+        cout << "Error: invalid extention\n";
+        goto point;
+    }
 }
 
-void grayScaling(string filename)
+void grayScaling(string filename, Image &sora)
 {
     Image image(filename);
     for (int i = 0; i < image.width; ++i)
@@ -31,12 +41,15 @@ void grayScaling(string filename)
             }
         }
     }
-    save(image);
+    sora = image;
 }
 
-void darken(string filename)
+void darken(string filename, Image &sora)
 {
     Image image(filename);
+    int prcntg;
+    cout << "Enter the percentage to the darkeness from 1 to 100: ";
+    cin >> prcntg;
 
     for (int i = 0; i < image.width; ++i)
     {
@@ -45,35 +58,40 @@ void darken(string filename)
 
             for (int k = 0; k < 3; ++k)
             {
-                image(i, j, k) -= image(i, j, k) / 2;
+                image(i, j, k) -= image(i, j, k) * prcntg / 100;
             }
         }
     }
-    save(image);
+    sora = image;
 }
 
-void lighten(string filename)
+void lighten(string filename, Image &sora)
 {
     Image image(filename);
-
-    for (int i = 0; i < image.width; ++i)
+    int prcntg;
+    cout << "Enter the percentage to the darkeness from 1 to 100: ";
+    cin >> prcntg;
+    prcntg /= 20;
+    while (prcntg--)
     {
-        for (int j = 0; j < image.height; ++j)
+        for (int i = 0; i < image.width; ++i)
         {
-            for (int k = 0; k < 3; ++k)
+            for (int j = 0; j < image.height; ++j)
             {
-                unsigned int rqm = 20;
-                if (image(i, j, k) + rqm < 255)
+                for (int k = 0; k < 3; ++k)
                 {
-                    image(i, j, k) += rqm;
+                    if (image(i, j, k) + 20 < 255)
+                    {
+                        image(i, j, k) += 20;
+                    }
                 }
             }
         }
     }
-    save(image);
+    sora = image;
 }
 
-void blackandwhite(string filename)
+void blackandwhite(string filename, Image &sora)
 {
     Image image(filename);
 
@@ -104,10 +122,10 @@ void blackandwhite(string filename)
             }
         }
     }
-    save(image);
+    sora = image;
 }
 
-void flipped(string filename)
+void flipped(string filename, Image &sora)
 {
     // take char from user and make sure that he choose valid
     char x;
@@ -156,10 +174,10 @@ void flipped(string filename)
             }
         }
     }
-    save(image2);
+    sora = image2;
 }
 
-void merge(string fileName)
+void merge(string fileName, Image &sora)
 {
     Image img1(fileName);
     cout << "enter the second image to merge: ";
@@ -185,11 +203,10 @@ void merge(string fileName)
             }
         }
     }
-
-    save(merged);
+    sora = merged;
 }
 
-void crop(string filename)
+void crop(string filename, Image &sora)
 {
     int x, y;
     cout << "Enter x and y input as the starting point:\n ";
@@ -198,8 +215,6 @@ void crop(string filename)
     int w, h;
     cout << "Enter w and h as the dimensions of the area to cut:\n ";
     cin >> w >> h;
-
-    cin >> filename;
 
     Image image(filename);
 
@@ -216,37 +231,13 @@ void crop(string filename)
             }
         }
     }
-
-    save(image2);
+    sora = image2;
 }
 
-void edges(string fileName)
+void edges(string fileName, Image &sora)
 {
-    Image img(fileName);
-
-    for (int i = 0; i < img.width; ++i)
-    {
-        for (int j = 0; j < img.height; ++j)
-        {
-            unsigned int avg = 0;
-            for (int k = 0; k < 3; ++k)
-            {
-                avg += img(i, j, k);
-            }
-            avg /= 3;
-            for (int k = 0; k < 3; ++k)
-            {
-                if (avg >= 128)
-                {
-                    img(i, j, k) = 255;
-                }
-                else
-                {
-                    img(i, j, k) = 0;
-                }
-            }
-        }
-    }
+    Image img;
+    blackandwhite(fileName, img);
 
     int cnt = 0;
     for (int i = 1; i < img.width - 1; ++i)
@@ -293,33 +284,39 @@ void edges(string fileName)
             }
         }
     }
-    save(img);
+    sora = img;
+}
+
+void red(string fileName, Image &sora)
+{
+    Image img(fileName);
+    grayScaling(fileName,img);
+    for (int i = 0; i < img.width; ++i)
+    {
+        for (int j = 0; j < img.height; ++j)
+        {
+            for (int k = 1; k < 3; ++k)
+            {
+                img(i,j,k) = 0;
+            }
+        }
+    }
+    sora = img;
 }
 
 int main()
 {
 
+    cout << "\nWelcome to our program **PhotoKoshk**\n";
+
     while (true)
     {
-        cout << "\nWelcome to our program **PhotoKoshk**\n";
-
-        string choice;
-        cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)\nJ)\n";
-        getline(cin, choice);
-        cout << "\n";
-        choice[0] = tolower(choice[0]);
-        string validChoice = "abcdefghijk";
-        while (!(validChoice.find(choice) < validChoice.length()) || (choice.length() != 1))
-        {
-            cout << "Please insert a valid char:\n";
-            getline(cin, choice);
-            choice[0] = tolower(choice[0]);
-        }
-        // ============================================ //
+        // ================= Check on the fileName ================= //
         string fileName;
+        Image currentImg;
         while (true)
         {
-            cout << "Enter the image name you want to do:\n";
+            cout << "Enter the image name you want to apply the filter on:\n";
             cin >> fileName;
             Image test;
             try
@@ -332,46 +329,93 @@ int main()
                 cout << "Error: unvalid image name... Please write right image name\n";
             }
         }
+        // ===================== choose upply which func ==================== //
+        while (true)
+        {
+            // getting started and choosing filter //
+            string choice;
+            cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\n";
+            cin.ignore();
+            getline(cin, choice);
+            cout << "\n";
+            choice[0] = tolower(choice[0]);
+            string validChoice = "abcdefghijk";
+            while (!(validChoice.find(choice) < validChoice.length()) || (choice.length() != 1))
+            {
+                cout << "Please insert a valid char:\n";
+                getline(cin, choice);
+                choice[0] = tolower(choice[0]);
+            }
 
-        if (choice == "a")
-        {
-            grayScaling(fileName);
-        }
-        else if (choice == "b")
-        {
-            darken(fileName);
-        }
-        else if (choice == "c")
-        {
-            lighten(fileName);
-        }
-        else if (choice == "d")
-        {
-            blackandwhite(fileName);
-        }
-        else if (choice == "e")
-        {
-            flipped(fileName);
-        }
-        else if (choice == "f")
-        {
-            merge(fileName);
-        }
-        else if (choice == "g")
-        {
-            crop(fileName);
-        }
-        else if (choice == "h")
-        {
-            edges(fileName);
-        }
-        else if (choice == "i")
-        {
-            cout << choice;
-        }
-        else if (choice == "j")
-        {
-            cout << choice;
+            if (choice == "a")
+            {
+                grayScaling(fileName, currentImg);
+            }
+            else if (choice == "b")
+            {
+                darken(fileName, currentImg);
+            }
+            else if (choice == "c")
+            {
+                lighten(fileName, currentImg);
+            }
+            else if (choice == "d")
+            {
+                blackandwhite(fileName, currentImg);
+            }
+            else if (choice == "e")
+            {
+                flipped(fileName, currentImg);
+            }
+            else if (choice == "f")
+            {
+                merge(fileName, currentImg);
+            }
+            else if (choice == "g")
+            {
+                crop(fileName, currentImg);
+            }
+            else if (choice == "h")
+            {
+                edges(fileName, currentImg);
+            }
+            else if (choice == "i")
+            {
+                cout << choice;
+            }
+            else if (choice == "j")
+            {
+                cout << choice;
+            }
+            cout << "Choose an option\nA)Save image\nB)Add more filters\nC)Skip\n";
+            string choice2;
+            // cin.ignore();
+            getline(cin, choice2);
+            choice2[0] = tolower(choice2[0]);
+            while (choice2 != "a" && choice2 != "b" && choice2 != "c" || (choice2.length() != 1))
+            {
+                cout << "Please insert a valid char\n";
+                // cin.ignore();
+                getline(cin, choice2);
+                choice2[0] = tolower(choice2[0]);
+            }
+            if (choice2 == "a")
+            {
+                saveImg(currentImg);
+                remove("temp.jpg");
+                break;
+            }
+            else if (choice2 == "b")
+            {
+                currentImg.saveImage("temp.jpg");
+                fileName = "temp.jpg";
+                continue;
+            }
+            else
+            {
+                remove("temp.jpg");
+                break;
+            }
         }
 
         cout << "\nthank you for using our program\nA)Again\nB)Exit\n";
