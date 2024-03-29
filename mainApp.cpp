@@ -608,6 +608,22 @@ void rotate(string filename, Image &sora)
     }
 }
 
+void SunnyImage(string filename,Image &sora){
+    Image image(filename);
+    for(int i=0;i<image.width;i++){
+        for(int j=0;j<image.height;j++){
+            for(int k=0;k<3;k++){
+                if(k==2){
+                    if(image(i,j,k)>50){
+                    image(i,j,k)-=50;
+                    }
+                }
+            }
+        }
+    }
+    sora=image;
+}
+
 int main()
 {
 
@@ -638,12 +654,12 @@ int main()
         {
             // getting started and choosing filter //
             string choice;
-            cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)Resizing Image\nJ)Blur Image\nK)frame image\nL)Rotate Image\nM)Invert Image\nN)Infrared filter\n";
+            cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)Resizing Image\nJ)Blur Image\nK)frame image\nL)Rotate Image\nM)Invert Image\nN)Infrared filter\nO)Sunny filter\n";
             cin.ignore();
             getline(cin, choice);
             cout << "\n";
             choice[0] = tolower(choice[0]);
-            string validChoice = "abcdefghijklmn";
+            string validChoice = "abcdefghijklmno";
             while (!(validChoice.find(choice) < validChoice.length()) || (choice.length() != 1))
             {
                 cout << "Please insert a valid char:\n";
@@ -706,6 +722,10 @@ int main()
             else if (choice == "n")
             {
                 red(fileName, currentImg);
+            }
+            else if (choice == "o")
+            {
+                SunnyImage(fileName, currentImg);
             }
 
             cout << "Choose an option\nA)Save image\nB)Add more filters\nC)Skip\n";
