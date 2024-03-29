@@ -179,8 +179,98 @@ void flipped(string filename, Image &sora)
     sora = image2;
 }
 
+void ResizingImages(string filename, Image &sora, int newWidth = 0, int newHeight = 0)
+{
+    Image image(filename);
+    string choice;
+    if (newWidth == 0 && newHeight == 0)
+    {
+        // take choice from user to Enter new dimensions or Enter ratio of reduction/increase
+        cout << "Choose resizing option:\nA) Enter new dimensions\nB) Enter ratio of reduction/increase\nEnter your choice: " << endl;
+        getline(cin, choice);
+
+        // make sure that choice valid
+        while (choice != "A" && choice != "a" && choice != "B" && choice != "b")
+        {
+            cout << "\nPls enter valid option\nA) Enter new dimensions\nB) Enter ratio of reduction/increase\nEnter your choice:  " << endl;
+            getline(cin, choice);
+        }
+    }
+    else
+    {
+        choice = "a";
+    }
+
+    // if choice = a user Enter new dimensions else user Enter ratio of reduction/increase
+    if (choice == "A" || choice == "a")
+    {
+
+        // define and take new width and height
+        if (newWidth == 0 && newHeight == 0)
+        {
+            // int newWidth, newHeight;
+            cout << "Enter new width and new height: ";
+            cin >> newWidth >> newHeight;
+        }
+
+        // make new photo that have the new dimensions
+        Image resizedImage(newWidth, newHeight);
+
+        // for loop that edit and take every pixel to new photo
+        for (int y = 0; y < newHeight; y++)
+        {
+            for (int x = 0; x < newWidth; x++)
+            {
+                int srcX = static_cast<int>(x * static_cast<float>(image.width) / newWidth);
+                int srcY = static_cast<int>(y * static_cast<float>(image.height) / newHeight);
+
+                // change the dimensions and doesnot change the color
+                for (int c = 0; c < image.channels; c++)
+                {
+                    resizedImage(x, y, c) = image(srcX, srcY, c);
+                }
+            }
+        }
+
+        sora = resizedImage;
+    }
+    else
+    {
+
+        // take ratio of reduction/increase
+        float ratio;
+        cout << "Enter the ratio of reduction/increase: ";
+        cin >> ratio;
+
+        // set new Width and Height
+        int newWidth = static_cast<int>(image.width * ratio);
+        int newHeight = static_cast<int>(image.height * ratio);
+
+        // make new photo that have the new dimensions
+        Image resizedImage(newWidth, newHeight);
+
+        // for loop that edit and take every pixel to new photo
+        for (int y = 0; y < newHeight; y++)
+        {
+            for (int x = 0; x < newWidth; x++)
+            {
+                int srcX = static_cast<int>(x / ratio);
+                int srcY = static_cast<int>(y / ratio);
+
+                // change the dimensions and doesnot change the color
+                for (int c = 0; c < image.channels; c++)
+                {
+                    resizedImage(x, y, c) = image(srcX, srcY, c);
+                }
+            }
+        }
+        sora = resizedImage;
+    }
+}
+
 void merge(string fileName, Image &sora)
 {
+    string temp = fileName;
     Image img1(fileName);
 re:
     cout << "enter the second image to merge: ";
@@ -189,7 +279,6 @@ re:
     {
         Image test;
         test.loadNewImage(fileName);
-        break;
     }
     catch (const std::exception &e)
     {
@@ -197,27 +286,65 @@ re:
         goto re;
     }
     Image img2(fileName);
-    int minW, minH;
-    minW = min(img1.width, img2.width);
-    minH = min(img1.height, img2.height);
 
-    Image merged(minW, minH);
-    int s1, s2, s3, s4;
-    s1 = img1.width - minW;
-    s2 = img1.height - minH;
-    s3 = img2.width - minW;
-    s4 = img2.height - minH;
-    for (int i = 0; i < merged.width; i++)
+    string ch;
+    cout << "A)Risize the small image and merge\nB)Merge the commaon area\n";
+    cin.ignore();
+    getline(cin, ch);
+    cout << "\n";
+    ch[0] = tolower(ch[0]);
+    string validChoice = "ab";
+    while (!(validChoice.find(ch) < validChoice.length()) || (ch.length() != 1))
     {
-        for (int j = 0; j < merged.height; j++)
+        cout << "Please insert a valid char:\n";
+        getline(cin, ch);
+        ch[0] = tolower(ch[0]);
+    }
+
+    if (ch == "b")
+    {
+        /* code */
+        int minW, minH;
+        minW = min(img1.width, img2.width);
+        minH = min(img1.height, img2.height);
+        Image merged(minW, minH);
+        int s1, s2, s3, s4;
+        s1 = img1.width - minW;
+        s2 = img1.height - minH;
+        s3 = img2.width - minW;
+        s4 = img2.height - minH;
+        for (int i = 0; i < merged.width; i++)
         {
-            for (int k = 0; k < 3; k++)
+            for (int j = 0; j < merged.height; j++)
             {
-                merged(i, j, k) = (img1(i + s1, j + s2, k) + img2(i + s3, j + s4, k)) / 2;
+                for (int k = 0; k < 3; k++)
+                {
+                    merged(i, j, k) = (img1(i + s1, j + s2, k) + img2(i + s3, j + s4, k)) / 2;
+                }
             }
         }
+        sora = merged;
     }
-    sora = merged;
+    else
+    {
+        int maxW, maxH;
+        maxW = max(img1.width, img2.width);
+        maxH = max(img1.height, img2.height);
+        ResizingImages(temp, img1, maxW, maxH);
+        ResizingImages(fileName, img2, maxW, maxH);
+        Image merged(maxW, maxH);
+        for (int i = 0; i < merged.width; i++)
+        {
+            for (int j = 0; j < merged.height; j++)
+            {
+                for (int k = 0; k < 3; k++)
+                {
+                    merged(i, j, k) = (img1(i, j, k) + img2(i, j, k)) / 2;
+                }
+            }
+        }
+        sora = merged;
+    }
 }
 
 void crop(string filename, Image &sora)
@@ -330,85 +457,6 @@ void red(string fileName, Image &sora)
         }
     }
     sora = img;
-}
-
-void ResizingImages(string filename, Image &sora)
-{
-    Image image(filename);
-
-    // take choice from user to Enter new dimensions or Enter ratio of reduction/increase
-    string choice;
-    cout << "Choose resizing option:\nA) Enter new dimensions\nB) Enter ratio of reduction/increase\nEnter your choice: " << endl;
-    getline(cin, choice);
-    cin.ignore();
-    // make sure that choice valid
-    while (choice != "A" && choice != "a" && choice != "B" && choice != "b")
-    {
-        cout << "\nPls enter valid option\nA) Enter new dimensions\nB) Enter ratio of reduction/increase\nEnter your choice:  " << endl;
-        getline(cin, choice);
-    }
-
-    // if choice = a user Enter new dimensions else user Enter ratio of reduction/increase
-    if (choice == "A" || choice == "a")
-    {
-
-        // define and take new width and height
-        int newWidth, newHeight;
-        cout << "Enter new width and new height: ";
-        cin >> newWidth >> newHeight;
-        // make new photo that have the new dimensions
-        Image resizedImage(newWidth, newHeight);
-
-        // for loop that edit and take every pixel to new photo
-        for (int y = 0; y < newHeight; y++)
-        {
-            for (int x = 0; x < newWidth; x++)
-            {
-                int srcX = static_cast<int>(x * static_cast<float>(image.width) / newWidth);
-                int srcY = static_cast<int>(y * static_cast<float>(image.height) / newHeight);
-
-                // change the dimensions and doesnot change the color
-                for (int c = 0; c < image.channels; c++)
-                {
-                    resizedImage(x, y, c) = image(srcX, srcY, c);
-                }
-            }
-        }
-
-        sora = resizedImage;
-    }
-    else
-    {
-
-        // take ratio of reduction/increase
-        float ratio;
-        cout << "Enter the ratio of reduction/increase: ";
-        cin >> ratio;
-
-        // set new Width and Height
-        int newWidth = static_cast<int>(image.width * ratio);
-        int newHeight = static_cast<int>(image.height * ratio);
-
-        // make new photo that have the new dimensions
-        Image resizedImage(newWidth, newHeight);
-
-        // for loop that edit and take every pixel to new photo
-        for (int y = 0; y < newHeight; y++)
-        {
-            for (int x = 0; x < newWidth; x++)
-            {
-                int srcX = static_cast<int>(x / ratio);
-                int srcY = static_cast<int>(y / ratio);
-
-                // change the dimensions and doesnot change the color
-                for (int c = 0; c < image.channels; c++)
-                {
-                    resizedImage(x, y, c) = image(srcX, srcY, c);
-                }
-            }
-        }
-        sora = resizedImage;
-    }
 }
 
 void blur(string filename, Image &sora)
@@ -620,24 +668,56 @@ void rotate(string filename, Image &sora)
     }
 }
 
-void SunnyImage(string filename,Image &sora){
+void SunnyImage(string filename, Image &sora)
+{
     Image image(filename);
-    for(int i=0;i<image.width;i++){
-        for(int j=0;j<image.height;j++){
-            for(int k=0;k<3;k++){
-                if(k==2){
-                    if(image(i,j,k)>50){
-                    image(i,j,k)-=50;
+    for (int i = 0; i < image.width; i++)
+    {
+        for (int j = 0; j < image.height; j++)
+        {
+            for (int k = 0; k < 3; k++)
+            {
+                if (k == 2)
+                {
+                    if (image(i, j, k) > 50)
+                    {
+                        image(i, j, k) -= 50;
                     }
                 }
             }
         }
     }
-    sora=image;
+    sora = image;
+}
+
+void violetImg(string fileName, Image &sora)
+{
+    Image image(fileName);
+    for (int i = 0; i < image.width; i++)
+    {
+        for (int j = 0; j < image.height; j++)
+        {
+            for (int k = 0; k < 3; k++)
+            {
+                if (k == 1)
+                {
+                    if (image(i, j, k) > 50)
+                    {
+                        image(i, j, k) -= 50;
+                    }
+                }
+            }
+        }
+    }
+    sora = image;
 }
 
 int main()
 {
+
+    Image tst;
+    violetImg("imgs\\luffy.jpg",tst);
+    tst.saveImage("suii.jpg");
 
     cout << "\nWelcome to our program **PhotoKoshk**\n";
 
@@ -666,12 +746,12 @@ int main()
         {
             // getting started and choosing filter //
             string choice;
-            cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)Resizing Image\nJ)Blur Image\nK)frame image\nL)Rotate Image\nM)Invert Image\nN)Infrared filter\nO)Sunny filter\n";
+            cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)Resizing Image\nJ)Blur Image\nK)frame image\nL)Rotate Image\nM)Invert Image\nN)Infrared filter\nO)Sunny filter\nP)Violet filter\n";
             cin.ignore();
             getline(cin, choice);
             cout << "\n";
             choice[0] = tolower(choice[0]);
-            string validChoice = "abcdefghijklmno";
+            string validChoice = "abcdefghijklmnop";
             while (!(validChoice.find(choice) < validChoice.length()) || (choice.length() != 1))
             {
                 cout << "Please insert a valid char:\n";
@@ -738,6 +818,10 @@ int main()
             else if (choice == "o")
             {
                 SunnyImage(fileName, currentImg);
+            }
+            else if (choice == "p")
+            {
+                violetImg(fileName, currentImg);
             }
 
             cout << "Choose an option\nA)Save image\nB)Add more filters\nC)Skip\n";
