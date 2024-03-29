@@ -3,6 +3,7 @@
 #include <cmath>
 #include "Image_Class.h"
 #include <stdio.h>
+#include <string>
 using namespace std;
 
 void saveImg(Image sora)
@@ -128,13 +129,14 @@ void blackandwhite(string filename, Image &sora)
 void flipped(string filename, Image &sora)
 {
     // take char from user and make sure that he choose valid
-    char x;
-    cout << "which flip do u want\nA)flip vetical\nB)flip Horizontal\n";
-    cin >> x;
-    while ((x != 'a') and (x != 'b') and (x != 'A') and (x != 'B'))
+    string x;
+    cout << "which flip do u want\nA)Vetical flip\nB)Horizontal flip\n";
+    getline(cin, x);
+    cin.ignore();
+    while ((x != "a") && (x != "b") && (x != "A") && (x != "B"))
     {
-        cout << "\nplease enter valid char\nwhich flip do u want\nA)flip vetical\nB)flip Horizontal\n";
-        cin >> x;
+        cout << "\nplease enter valid char\nwhich flip do u want\nA)vetical flip\nB)Horizontal flip\n";
+        getline(cin, x);
     }
 
     Image image(filename);
@@ -159,7 +161,7 @@ void flipped(string filename, Image &sora)
             for (int k = 0; k < 3; ++k)
             {
                 int temp;
-                if (x == 'a' || x == 'A')
+                if (x == "a" || x == "A")
                 {
                     // if temp = i that flip vertical
                     temp = i;
@@ -287,21 +289,323 @@ void edges(string fileName, Image &sora)
     sora = img;
 }
 
+void invert(string filename, Image &sora)
+{
+    Image image(filename);
+    for (int i = 0; i < image.width; ++i)
+    {
+        for (int j = 0; j < image.height; ++j)
+        {
+            for (int k = 0; k < 3; ++k)
+            {
+                image(i, j, k) = 255 - image(i, j, k);
+            }
+        }
+    }
+    sora = image;
+}
+
 void red(string fileName, Image &sora)
 {
     Image img(fileName);
-    grayScaling(fileName,img);
+    grayScaling(fileName, img);
+    invert(fileName, img);
     for (int i = 0; i < img.width; ++i)
     {
         for (int j = 0; j < img.height; ++j)
         {
-            for (int k = 1; k < 3; ++k)
-            {
-                img(i,j,k) = 0;
-            }
+            img(i, j, 0) = 255;
         }
     }
     sora = img;
+}
+
+void ResizingImages(string filename, Image &sora)
+{
+    Image image(filename);
+
+    // take choice from user to Enter new dimensions or Enter ratio of reduction/increase
+    string choice;
+    cout << "Choose resizing option:\nA) Enter new dimensions\nB) Enter ratio of reduction/increase\nEnter your choice: " << endl;
+    getline(cin, choice);
+    cin.ignore();
+    // make sure that choice valid
+    while (choice != "A" && choice != "a" && choice != "B" && choice != "b")
+    {
+        cout << "\nPls enter valid option\nA) Enter new dimensions\nB) Enter ratio of reduction/increase\nEnter your choice:  " << endl;
+        getline(cin, choice);
+    }
+
+    // if choice = a user Enter new dimensions else user Enter ratio of reduction/increase
+    if (choice == "A" || choice == "a")
+    {
+
+        // define and take new width and height
+        int newWidth, newHeight;
+        cout << "Enter new width and new height: ";
+        cin >> newWidth >> newHeight;
+        // make new photo that have the new dimensions
+        Image resizedImage(newWidth, newHeight);
+
+        // for loop that edit and take every pixel to new photo
+        for (int y = 0; y < newHeight; y++)
+        {
+            for (int x = 0; x < newWidth; x++)
+            {
+                int srcX = static_cast<int>(x * static_cast<float>(image.width) / newWidth);
+                int srcY = static_cast<int>(y * static_cast<float>(image.height) / newHeight);
+
+                // change the dimensions and doesnot change the color
+                for (int c = 0; c < image.channels; c++)
+                {
+                    resizedImage(x, y, c) = image(srcX, srcY, c);
+                }
+            }
+        }
+
+        sora = resizedImage;
+    }
+    else
+    {
+
+        // take ratio of reduction/increase
+        float ratio;
+        cout << "Enter the ratio of reduction/increase: ";
+        cin >> ratio;
+
+        // set new Width and Height
+        int newWidth = static_cast<int>(image.width * ratio);
+        int newHeight = static_cast<int>(image.height * ratio);
+
+        // make new photo that have the new dimensions
+        Image resizedImage(newWidth, newHeight);
+
+        // for loop that edit and take every pixel to new photo
+        for (int y = 0; y < newHeight; y++)
+        {
+            for (int x = 0; x < newWidth; x++)
+            {
+                int srcX = static_cast<int>(x / ratio);
+                int srcY = static_cast<int>(y / ratio);
+
+                // change the dimensions and doesnot change the color
+                for (int c = 0; c < image.channels; c++)
+                {
+                    resizedImage(x, y, c) = image(srcX, srcY, c);
+                }
+            }
+        }
+        sora = resizedImage;
+    }
+}
+
+void blur(string filename, Image &sora)
+{
+    Image image(filename);
+    int n;
+    cout << "\nenter the level of blur from 1 to 10: ";
+    cin >> n;
+    int level = 1;
+    if (n < 0 || n > 10)
+    {
+        cout << "different level Please\n";
+        cin >> n;
+    }
+    while (level <= n)
+    {
+        for (int i = 1; i < image.width - 1; i += 2)
+        {
+            for (int j = 1; j < image.height - 1; j += 2)
+            {
+                for (int k = 0; k < 3; k++)
+                {
+                    int avg = (image(i - 1, j, k) + image(i + 1, j, k) + image(i, j - 1, k) + image(i, j + 1, k) + image(i - 1, j - 1, k) + image(i + 1, j + 1, k) + image(i - 1, j + 1, k) + image(i + 1, j - 1, k) + image(i, j, k) * 2) / 10;
+                    image(i - 1, j, k) = avg;
+                    image(i + 1, j, k) = avg;
+                    image(i, j - 1, k) = avg;
+                    image(i, j + 1, k) = avg;
+                    image(i - 1, j - 1, k) = avg;
+                    image(i + 1, j + 1, k) = avg;
+                    image(i - 1, j + 1, k) = avg;
+                    image(i + 1, j - 1, k) = avg;
+                    image(i, j, k) = avg;
+                }
+            }
+        }
+        level++;
+    }
+    sora = image;
+}
+
+void frame_filter(string filename, Image &sora)
+{
+    cout << "\nwhice frame do you want\nA)white frame\nB)Zebra frame\n";
+    string charr;
+    getline(cin, charr);
+    while (charr.length() != 1)
+    {
+        cout << "Please just insert one char\n";
+        getline(cin, charr);
+    }
+    charr = toupper(charr[0]);
+    while (charr != "A" && charr != "B")
+    {
+        cout << "Please just insert a valid char('A','B')\n";
+        getline(cin, charr);
+        charr = toupper(charr[0]);
+    }
+    Image image(filename);
+    if (charr == "A")
+    {
+        for (int i = 0; i < image.width; ++i)
+        {
+            for (int j = 0; j < image.height; ++j)
+            {
+                if (i <= 20 || i >= image.width - 21 || j <= 20 || j >= image.height - 21)
+                {
+                    for (int k = 0; k < 3; ++k)
+                    {
+                        image(i, j, k) = 255;
+                    }
+                }
+            }
+        }
+        sora = image;
+    }
+    else if (charr == "B")
+    {
+        for (int i = 0; i < image.width; ++i)
+        {
+            for (int j = 0; j < image.height; ++j)
+            {
+                if (i <= 20 || i >= image.width - 21 || j <= 20 || j >= image.height - 21)
+                {
+                    for (int k = 0; k < 3; ++k)
+                    {
+                        image(i, j, k) = 255;
+                    }
+                }
+                if (i == 0 || i == 5 || i == 10 || i == image.width - 1 || i == image.width - 6 || i == image.width - 11 || j == 0 || j == 5 || j == 10 || j == image.height - 1 || j == image.height - 6 || j == image.height - 11)
+                {
+                    for (int k = 0; k < 3; ++k)
+                    {
+                        image(i, j, k) = 0;
+                    }
+                }
+            }
+        }
+        sora = image;
+    }
+}
+
+void rotate(string filename, Image &sora)
+{
+    cout << "A)Rotate 90\nB)Rotate 180\nC)Rotate 270\n";
+    string charr;
+    getline(cin, charr);
+    while (charr.length() != 1)
+    {
+        cout << "Please just insert one char\n";
+        getline(cin, charr);
+    }
+    charr = toupper(charr[0]);
+    while (charr != "A" && charr != "B" && charr != "C")
+    {
+        cout << "Please just insert a valid char('A','B','C')\n";
+        getline(cin, charr);
+    }
+    if (charr == "A")
+    {
+        Image image(filename);
+        Image image2(image.height, image.width);
+        for (int i = 0; i < image.height; ++i)
+        {
+            for (int j = 0; j < image.width; ++j)
+            {
+                for (int k = 0; k < 3; ++k)
+                {
+                    image2(i, j, k) = 255;
+                }
+            }
+        }
+        for (int i = 0; i < image.width; ++i)
+        {
+            for (int j = 0; j < image.height; ++j)
+            {
+                // for loop that sum every pixels three colors
+                for (int k = 0; k < 3; ++k)
+                {
+                    image2(image.height - j - 1, i, k) = image(i, j, k);
+                }
+            }
+        }
+        sora = image2;
+    }
+    else if (charr == "B")
+    {
+        Image image(filename);
+        Image image2(filename);
+        for (int i = 0; i < image.width; ++i)
+        {
+            for (int j = 0; j < image.height; ++j)
+            {
+                for (int k = 0; k < 3; ++k)
+                {
+                    image2(i, j, k) = 255;
+                }
+            }
+        }
+        for (int i = 0; i < image.width; ++i)
+        {
+            for (int j = 0; j < image.height; ++j)
+            {
+                // for loop that sum every pixels three colors
+                for (int k = 0; k < 3; ++k)
+                {
+                    image2(image.width - i - 1, image.height - j - 1, k) = image(i, j, k);
+                }
+            }
+        }
+        sora = image2;
+    }
+    else
+    {
+        Image image(filename);
+        Image image2(image.height, image.width);
+        for (int i = 0; i < image.height; ++i)
+        {
+            for (int j = 0; j < image.width; ++j)
+            {
+                for (int k = 0; k < 3; ++k)
+                {
+                    image2(i, j, k) = 255;
+                }
+            }
+        }
+        for (int i = 0; i < image.width; ++i)
+        {
+            for (int j = 0; j < image.height; ++j)
+            {
+                // for loop that sum every pixels three colors
+                for (int k = 0; k < 3; ++k)
+                {
+                    image2(image.height - j - 1, image.width - i - 1, k) = image(i, j, k);
+                }
+            }
+        }
+        for (int i = 0; i < image.width; ++i)
+        {
+            for (int j = 0; j < image.height; ++j)
+            {
+                // for loop that sum every pixels three colors
+                for (int k = 0; k < 3; ++k)
+                {
+                    image2(j, image.width - i - 1, k) = image(i, j, k);
+                }
+            }
+        }
+        sora = image2;
+    }
 }
 
 int main()
@@ -334,12 +638,12 @@ int main()
         {
             // getting started and choosing filter //
             string choice;
-            cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\n";
+            cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)Resizing Image\nJ)Blur Image\nK)frame image\nL)Rotate Image\nM)Invert Image\nN)Infrared filter\n";
             cin.ignore();
             getline(cin, choice);
             cout << "\n";
             choice[0] = tolower(choice[0]);
-            string validChoice = "abcdefghijk";
+            string validChoice = "abcdefghijklmn";
             while (!(validChoice.find(choice) < validChoice.length()) || (choice.length() != 1))
             {
                 cout << "Please insert a valid char:\n";
@@ -381,15 +685,32 @@ int main()
             }
             else if (choice == "i")
             {
-                cout << choice;
+                ResizingImages(fileName, currentImg);
             }
             else if (choice == "j")
             {
-                cout << choice;
+                blur(fileName, currentImg);
             }
+            else if (choice == "k")
+            {
+                frame_filter(fileName, currentImg);
+            }
+            else if (choice == "l")
+            {
+                rotate(fileName, currentImg);
+            }
+            else if (choice == "m")
+            {
+                invert(fileName, currentImg);
+            }
+            else if (choice == "n")
+            {
+                red(fileName, currentImg);
+            }
+
             cout << "Choose an option\nA)Save image\nB)Add more filters\nC)Skip\n";
             string choice2;
-            // cin.ignore();
+            cin.ignore();
             getline(cin, choice2);
             choice2[0] = tolower(choice2[0]);
             while (choice2 != "a" && choice2 != "b" && choice2 != "c" || (choice2.length() != 1))
