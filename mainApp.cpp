@@ -182,8 +182,20 @@ void flipped(string filename, Image &sora)
 void merge(string fileName, Image &sora)
 {
     Image img1(fileName);
+re:
     cout << "enter the second image to merge: ";
     cin >> fileName;
+    try
+    {
+        Image test;
+        test.loadNewImage(fileName);
+        break;
+    }
+    catch (const std::exception &e)
+    {
+        cout << "Error: unvalid image name... Please write right image name\n";
+        goto re;
+    }
     Image img2(fileName);
     int minW, minH;
     minW = min(img1.width, img2.width);
