@@ -712,6 +712,80 @@ void violetImg(string fileName, Image &sora)
     sora = image;
 }
 
+void oilPainting(string fileName,Image& sora) {
+    Image image(fileName);
+    cout<<"Enter the radius\n";
+    int radius;cin>>radius;
+    cout<<"Enter the IntemsityLevels\n";
+    int intensityLevels;cin>>intensityLevels;
+    // Create temporary arrays to store counts and sums for each intensity bin
+    int intensityCount[intensityLevels] = {0};
+    int averageR[intensityLevels] = {0};
+    int averageG[intensityLevels] = {0};
+    int averageB[intensityLevels] = {0};
+
+    for (int y = 0; y < image.height; ++y) {
+        for (int x = 0; x < image.width; ++x) {
+            // Reset the intensity count and sums for each pixel
+            memset(intensityCount, 0, sizeof(intensityCount));
+            memset(averageR, 0, sizeof(averageR));
+            memset(averageG, 0, sizeof(averageG));
+            memset(averageB, 0, sizeof(averageB));
+
+            // Iterate through the neighborhood of the current pixel
+            for (int dy = -radius; dy <= radius; ++dy) {
+                for (int dx = -radius; dx <= radius; ++dx) {
+                    int nx = x + dx;
+                    int ny = y + dy;
+
+                    if (nx >= 0 && ny >= 0 && nx < image.width && ny < image.height) {
+                        // Get the color values of the neighbor pixel
+                        int r = image(nx,ny,0); // Red channel
+                        int g = image(nx, ny,1); // Green channel
+                        int b = image(nx, ny,2); // Blue channel
+
+                        // Calculate the intensity of the neighbor pixel
+                        int curIntensity = ((r + g + b) / 3) * intensityLevels / 255;
+
+                        // Increment the count and accumulate color values for the corresponding intensity bin
+                        intensityCount[curIntensity]++;
+                        averageR[curIntensity] += r;
+                        averageG[curIntensity] += g;
+                        averageB[curIntensity] += b;
+                    }
+                }
+            }
+
+            // Find the intensity bin with the highest count (dominant intensity)
+            int maxIndex = 0;
+            int curMax = intensityCount[0];
+            for (int i = 1; i < intensityLevels; ++i) {
+                if (intensityCount[i] > curMax) {
+                    curMax = intensityCount[i];
+                    maxIndex = i;
+                }
+            }
+
+            // Calculate the final color of the pixel using the dominant intensity level
+            int finalR = averageR[maxIndex] / curMax;
+            int finalG = averageG[maxIndex] / curMax;
+            int finalB = averageB[maxIndex] / curMax;
+
+            // Update the color of the current pixel in the oil painting image
+            for(int k=0;k<3;k++){
+                if(k==0){
+                    image(x,y,k)=finalR;
+                }else if(k==1){
+                    image(x,y,k)=finalG;
+                }else{
+                    image(x,y,k)=finalB;
+                }
+            }
+        }
+    }
+    sora=image;
+}
+
 int main()
 {
 
@@ -746,12 +820,12 @@ int main()
         {
             // getting started and choosing filter //
             string choice;
-            cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)Resizing Image\nJ)Blur Image\nK)frame image\nL)Rotate Image\nM)Invert Image\nN)Infrared filter\nO)Sunny filter\nP)Violet filter\n";
+            cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)Resizing Image\nJ)Blur Image\nK)frame image\nL)Rotate Image\nM)Invert Image\nN)Infrared filter\nO)Sunny filter\nP)Violet filter\nQ)Oil Painting\n";
             cin.ignore();
             getline(cin, choice);
             cout << "\n";
             choice[0] = tolower(choice[0]);
-            string validChoice = "abcdefghijklmnop";
+            string validChoice = "abcdefghijklmnopq";
             while (!(validChoice.find(choice) < validChoice.length()) || (choice.length() != 1))
             {
                 cout << "Please insert a valid char:\n";
@@ -822,6 +896,9 @@ int main()
             else if (choice == "p")
             {
                 violetImg(fileName, currentImg);
+            }else if (choice == "q")
+            {
+                oilPainting(fileName,currentImg);
             }
 
             cout << "Choose an option\nA)Save image\nB)Add more filters\nC)Skip\n";
