@@ -839,7 +839,7 @@ int main()
         {
             // getting started and choosing filter //
             string choice;
-            cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)Resizing Image\nJ)Blur Image\nK)frame image\nL)Rotate Image\nM)Invert Image\nN)Infrared filter\nO)Sunny filter\nP)Violet filter\nQ)Oil Painting\n";
+            cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)Resizing Image\nJ)Blur Image\nK)frame image\nL)Rotate Image\nM)Invert Image\nN)Infrared filter\nO)Sunny filter\nP)Violet filter\nQ)Oil Painting\nR)light_blue\n";
             cin.ignore();
             getline(cin, choice);
             cout << "\n";
@@ -918,6 +918,9 @@ int main()
             }else if (choice == "q")
             {
                 oilPainting(fileName,currentImg);
+            }else if (choice == "r")
+            {
+                light_blue(fileName,currentImg);
             }
 
             cout << "Choose an option\nA)Save image\nB)Add more filters\nC)Skip\n";
