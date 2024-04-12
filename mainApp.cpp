@@ -804,6 +804,51 @@ void light_blue(string fileName,Image& sora) {
 }
 
 
+void skew_filter((string filename, Image &sora)) {
+    // Load the input image
+    Image inputImage("luffy.jpg");
+
+    // Get the width and height of the image
+    int width = inputImage.width;
+    int height = inputImage.height;
+
+    // Prompt the user to enter the degree of skewness
+    int degree;
+    cout << "Enter the degree of skewness: ";
+    cin >> degree;
+
+    // Calculate the skew factor
+    double skewFactor = tan((90-degree) * M_PI / 180.0);
+
+    // Create a new image with increased width for skew effect
+    int skewedWidth = width + static_cast<int>(height * skewFactor);
+    Image skewedImage(skewedWidth, height);
+
+    // Apply skew effect to the new image
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < skewedWidth; x++) {
+            // Calculate the corresponding position in the original image
+            int sourceX = x - static_cast<int>((height - y - 1) * skewFactor);
+
+            // Check if the calculated position is within the bounds of the original image
+            if (sourceX >= 0 && sourceX < width) {
+                // Get the pixel value from the original image at the calculated position
+                unsigned char red = inputImage(sourceX, y, 0);
+                unsigned char green = inputImage(sourceX, y, 1);
+                unsigned char blue = inputImage(sourceX, y, 2);
+
+                // Assign the pixel value to the current pixel in the new image
+                skewedImage(x, y, 0) = red;
+                skewedImage(x, y, 1) = green;
+                skewedImage(x, y, 2) = blue;
+            }
+        }
+    }
+    sora = image;
+    
+}
+
+
 
 int main()
 {
