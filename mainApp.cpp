@@ -808,9 +808,9 @@ void light_blue(string fileName,Image& sora) {
 int main()
 {
 
-    Image tst;
-    violetImg("imgs\\luffy.jpg",tst);
-    tst.saveImage("suii.jpg");
+    // Image tst;
+    // violetImg("imgs\\luffy.jpg",tst);
+    // tst.saveImage("suii.jpg");
 
     cout << "\nWelcome to our program **PhotoKoshk**\n";
 
@@ -844,7 +844,7 @@ int main()
             getline(cin, choice);
             cout << "\n";
             choice[0] = tolower(choice[0]);
-            string validChoice = "abcdefghijklmnopq";
+            string validChoice = "abcdefghijklmnopqr";
             while (!(validChoice.find(choice) < validChoice.length()) || (choice.length() != 1))
             {
                 cout << "Please insert a valid char:\n";
