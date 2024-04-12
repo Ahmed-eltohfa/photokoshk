@@ -784,7 +784,26 @@ void oilPainting(string fileName,Image& sora) {
         }
     }
     sora=image;
+} 
+
+
+void light_blue(string fileName,Image& sora) {
+    Image image(fileName);
+    for (int y = 0; y < image.height; y++) {
+        for (int x = 0; x < image.width; x++) {
+            // Get the pixel at (x, y)
+            unsigned char& red = image(x, y, 0);
+            unsigned char& green = image(x, y, 1);
+            unsigned char& blue = image(x, y, 2);
+            
+            // Increase the blue channel value
+            blue = (blue > 200) ? 255 : blue + 55;
+        }
+    }
+    sora = image;
 }
+
+
 
 int main()
 {
