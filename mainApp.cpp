@@ -784,10 +784,82 @@ void oilPainting(string fileName,Image& sora) {
         }
     }
     sora=image;
+} 
+
+
+void light_blue(string fileName,Image& sora) {
+    Image image(fileName);
+    for (int y = 0; y < image.height; y++) {
+        for (int x = 0; x < image.width; x++) {
+            // Get the pixel at (x, y)
+            unsigned char& red = image(x, y, 0);
+            unsigned char& green = image(x, y, 1);
+            unsigned char& blue = image(x, y, 2);
+            
+            // Increase the blue channel value
+            blue = (blue > 200) ? 255 : blue + 55;
+        }
+    }
+    sora = image;
 }
+
+
+void skew_filter((string filename, Image &sora)) {
+    // Load the input image
+    Image inputImage("luffy.jpg");
+
+    // Get the width and height of the image
+    int width = inputImage.width;
+    int height = inputImage.height;
+
+    // Prompt the user to enter the degree of skewness
+    int degree;
+    cout << "Enter the degree of skewness: ";
+    cin >> degree;
+
+    // Calculate the skew factor
+    double skewFactor = tan((90-degree) * M_PI / 180.0);
+
+    // Create a new image with increased width for skew effect
+    int skewedWidth = width + static_cast<int>(height * skewFactor);
+    Image skewedImage(skewedWidth, height);
+
+    // Apply skew effect to the new image
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < skewedWidth; x++) {
+            // Calculate the corresponding position in the original image
+            int sourceX = x - static_cast<int>((height - y - 1) * skewFactor);
+
+            // Check if the calculated position is within the bounds of the original image
+            if (sourceX >= 0 && sourceX < width) {
+                // Get the pixel value from the original image at the calculated position
+                unsigned char red = inputImage(sourceX, y, 0);
+                unsigned char green = inputImage(sourceX, y, 1);
+                unsigned char blue = inputImage(sourceX, y, 2);
+
+                // Assign the pixel value to the current pixel in the new image
+                skewedImage(x, y, 0) = red;
+                skewedImage(x, y, 1) = green;
+                skewedImage(x, y, 2) = blue;
+            }
+        }
+    }
+    sora = image;
+    
+}
+
+
 
 int main()
 {
+<<<<<<< HEAD
+=======
+
+    // Image tst;
+    // violetImg("imgs\\luffy.jpg",tst);
+    // tst.saveImage("suii.jpg");
+
+>>>>>>> 398387f91ca0b82d9c9cb2520a1d7ea0b2ab139b
     cout << "\nWelcome to our program **PhotoKoshk**\n";
 
     while (true)
@@ -815,12 +887,12 @@ int main()
         {
             // getting started and choosing filter //
             string choice;
-            cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)Resizing Image\nJ)Blur Image\nK)frame image\nL)Rotate Image\nM)Invert Image\nN)Infrared filter\nO)Sunny filter\nP)Violet filter\nQ)Oil Painting\n";
+            cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)Resizing Image\nJ)Blur Image\nK)frame image\nL)Rotate Image\nM)Invert Image\nN)Infrared filter\nO)Sunny filter\nP)Violet filter\nQ)Oil Painting\nR)light_blue\n";
             cin.ignore();
             getline(cin, choice);
             cout << "\n";
             choice[0] = tolower(choice[0]);
-            string validChoice = "abcdefghijklmnopq";
+            string validChoice = "abcdefghijklmnopqr";
             while (!(validChoice.find(choice) < validChoice.length()) || (choice.length() != 1))
             {
                 cout << "Please insert a valid char:\n";
@@ -894,6 +966,9 @@ int main()
             }else if (choice == "q")
             {
                 oilPainting(fileName,currentImg);
+            }else if (choice == "r")
+            {
+                light_blue(fileName,currentImg);
             }
 
             cout << "Choose an option\nA)Save image\nB)Add more filters\nC)Skip\n";
