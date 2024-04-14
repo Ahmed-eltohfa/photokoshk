@@ -716,7 +716,7 @@ void oilPainting(string fileName,Image& sora) {
     Image image(fileName);
     cout<<"Enter the radius\n";
     int radius;cin>>radius;
-    cout<<"Enter the IntemsityLevels\n";
+    cout<<"Enter the IntensityLevels\n";
     int intensityLevels;cin>>intensityLevels;
     // Create temporary arrays to store counts and sums for each intensity bin
     int intensityCount[intensityLevels] = {0};
@@ -740,9 +740,9 @@ void oilPainting(string fileName,Image& sora) {
 
                     if (nx >= 0 && ny >= 0 && nx < image.width && ny < image.height) {
                         // Get the color values of the neighbor pixel
-                        int r = image(nx,ny,0); // Red channel
-                        int g = image(nx, ny,1); // Green channel
-                        int b = image(nx, ny,2); // Blue channel
+                        int r = image(nx,ny,0);
+                        int g = image(nx, ny,1);
+                        int b = image(nx, ny,2);
 
                         // Calculate the intensity of the neighbor pixel
                         int curIntensity = ((r + g + b) / 3) * intensityLevels / 255;
@@ -788,11 +788,6 @@ void oilPainting(string fileName,Image& sora) {
 
 int main()
 {
-
-    Image tst;
-    violetImg("imgs\\luffy.jpg",tst);
-    tst.saveImage("suii.jpg");
-
     cout << "\nWelcome to our program **PhotoKoshk**\n";
 
     while (true)
