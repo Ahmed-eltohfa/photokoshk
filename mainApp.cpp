@@ -848,6 +848,27 @@ void skew_filter((string filename, Image &sora)) {
     
 }
 
+void old_TV(string filename, Image &sora) {
+    Image image(filename);
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            
+            int randomNumber = rand() % 11;
+            if(randomNumber < 1){
+
+                for (int k = 0; k < 3; ++k) {
+                image(i, j, k)=180;
+               }
+
+        
+            }
+        }
+    }
+    sora = image;
+}
+
+
+
 
 
 int main()
