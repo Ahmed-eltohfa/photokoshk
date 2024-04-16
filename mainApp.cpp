@@ -1,9 +1,16 @@
-// main app to add filters to images
+// Authors      :                       Ahmed Ehab Salah                                     |                          Youssef Saleh Elhelw                                 |          Mostafa tarek hassanin
+// IDs          :                          20230011                                          |                                20230499                                       |                20230402
+// filters      :Graysacale--Merge--Darken and lighten--Detect imgae edges--Infrared--violet |  Invert--Rotate--Frame--Blur--sunny filter--oil Painting--Water drop          | Black and white--Flip--Crop--Resizing--skew--light blue--Old TV        
+// Version      :                                                                                                     1
+// Email        :                      eltohfa01@gmail.com                                   |                        youssefelhelwai@gmail.com                              |            seso63412@gmail.com
+//repo link     :                                                                                             https://github.com/Ahmed-eltohfa/photokoshk
 #include <iostream>
 #include <cmath>
 #include "Image_Class.h"
 #include <stdio.h>
 #include <string>
+#include <random>
+#include <ctime>
 using namespace std;
 
 void saveImg(Image sora)
@@ -132,7 +139,7 @@ void flipped(string filename, Image &sora)
     string x;
     cout << "which flip do u want\nA)Vetical flip\nB)Horizontal flip\n";
     getline(cin, x);
-    cin.ignore();
+    //cin.ignore();
     while ((x != "a") && (x != "b") && (x != "A") && (x != "B"))
     {
         cout << "\nplease enter valid char\nwhich flip do u want\nA)vetical flip\nB)Horizontal flip\n";
@@ -804,9 +811,9 @@ void light_blue(string fileName,Image& sora) {
 }
 
 
-void skew_filter((string filename, Image &sora)) {
+void skew_filter(string filename, Image &sora) {
     // Load the input image
-    Image inputImage("luffy.jpg");
+    Image inputImage(filename);
 
     // Get the width and height of the image
     int width = inputImage.width;
@@ -844,22 +851,56 @@ void skew_filter((string filename, Image &sora)) {
             }
         }
     }
-    sora = image;
-    
+    sora = skewedImage;
 }
-
-
-
+double angleW(int x, int y, int centerX, int centerY, double factor) {
+    int distanceX = x - centerX;
+    int distanceY = y - centerY;
+    double distance = sqrt(pow(distanceX,2) +pow(distanceY,2));
+    double angle = atan2(distanceX,distanceY);// arc tan :)
+    double newAngle = angle + factor * distance;
+    return newAngle;
+}
+void water_drop(string fileName,Image &sora){
+    Image image(fileName);
+    int centerX = image.width / 2;
+    int centerY = image.height / 2;
+    double factor = 0.09;
+    
+    for (int i = 0; i < image.height; i++) {
+        for (int j = 0; j < image.width; j++) {
+            double angle = angleW(j, i, centerX, centerY, factor);
+            int distanceX = j - centerX;
+            int distanceY = i - centerY;
+            double distance = sqrt(pow(distanceX,2) +pow(distanceY,2));
+            double radius = distance;
+            double xTwirled = centerX + radius * cos(angle);
+            double yTwirled = centerY + radius * sin(angle);
+            if (xTwirled >= 0 && xTwirled < image.width && yTwirled >= 0 && yTwirled < image.height) {
+                for(int k=0;k<3;k++){
+                    image(j,i,k)=image(xTwirled,yTwirled,k);
+                }
+            }
+        }
+    }
+    sora=image;
+}
+void old_TV(string filename, Image &sora) {
+    Image image(filename);
+    for (int i = 0; i < image.width; ++i) {
+        for (int j = 0; j < image.height; ++j) {
+            int randomNumber = rand() % 11;
+            if(randomNumber < 1){
+                for (int k = 0; k < 3; ++k) {
+                image(i, j, k)=180;
+                }
+            }
+        }
+    }
+    sora = image;
+}
 int main()
 {
-<<<<<<< HEAD
-=======
-
-    // Image tst;
-    // violetImg("imgs\\luffy.jpg",tst);
-    // tst.saveImage("suii.jpg");
-
->>>>>>> 398387f91ca0b82d9c9cb2520a1d7ea0b2ab139b
     cout << "\nWelcome to our program **PhotoKoshk**\n";
 
     while (true)
@@ -871,6 +912,7 @@ int main()
         {
             cout << "Enter the image name you want to apply the filter on:\n";
             cin >> fileName;
+            cin.ignore();
             Image test;
             try
             {
@@ -887,12 +929,11 @@ int main()
         {
             // getting started and choosing filter //
             string choice;
-            cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)Resizing Image\nJ)Blur Image\nK)frame image\nL)Rotate Image\nM)Invert Image\nN)Infrared filter\nO)Sunny filter\nP)Violet filter\nQ)Oil Painting\nR)light_blue\n";
-            cin.ignore();
+            cout << "Choose one of these filters:\nA)grayScaling\nB)darken\nC)lighten\nD)black and white\nE)Flipped\nF)Merge two pictures\nG)Crop\nH)Get edges\nI)Resizing Image\nJ)Blur Image\nK)frame image\nL)Rotate Image\nM)Invert Image\nN)Infrared filter\nO)Sunny filter\nP)Violet filter\nQ)Oil Painting\nR)light_blue\nS)Skew Filter\nT)Water drop\nU)Old TV\n";
             getline(cin, choice);
             cout << "\n";
             choice[0] = tolower(choice[0]);
-            string validChoice = "abcdefghijklmnopqr";
+            string validChoice = "abcdefghijklmnopqrstu";
             while (!(validChoice.find(choice) < validChoice.length()) || (choice.length() != 1))
             {
                 cout << "Please insert a valid char:\n";
@@ -969,12 +1010,20 @@ int main()
             }else if (choice == "r")
             {
                 light_blue(fileName,currentImg);
+            }else if (choice == "s")
+            {
+                skew_filter(fileName,currentImg);
+            }else if (choice == "t")
+            {
+                water_drop(fileName,currentImg);
+            }else if (choice == "u")
+            {
+                old_TV(fileName,currentImg);
             }
-
             cout << "Choose an option\nA)Save image\nB)Add more filters\nC)Skip\n";
             string choice2;
-            cin.ignore();
             getline(cin, choice2);
+            
             choice2[0] = tolower(choice2[0]);
             while (choice2 != "a" && choice2 != "b" && choice2 != "c" || (choice2.length() != 1))
             {
@@ -1000,6 +1049,7 @@ int main()
                 remove("temp.jpg");
                 break;
             }
+        cin.ignore();
         }
 
         cout << "\nthank you for using our program\nA)Again\nB)Exit\n";
