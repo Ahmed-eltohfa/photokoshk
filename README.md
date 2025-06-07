@@ -56,10 +56,6 @@ photokoshk is a C++ application that applies various filters to images. It lever
 
 ---
 
-<pre><code>## 📁 Directory Structure ``` photokoshk/ ├── imgs/ # Directory containing sample images ├── Image_Class.h # Header file for image processing class ├── mainApp.cpp # Main application source code ├── stb_image.h # Image loading library ├── stb_image_write.h # Image writing library ├── temp.jpg # Temporary file for processed images └── README.md # Project documentation ``` </code></pre>
-
----
-
 # 🤝 Contributing
   Contributions are welcome! If you have suggestions for improvements or new features, feel free to fork the repository and submit a pull request.
 
