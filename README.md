@@ -1,9 +1,9 @@
-## 📸 photokoshk
+# 📸 Photokoshk
 photokoshk is a C++ application that applies various filters to images. It leverages the stb_image and stb_image_write libraries for image processing tasks, providing a simple interface to enhance and modify images with different effects.
 
 ---
 
-# ✨ Features
+## ✨ Features
   Apply multiple image filters such as grayscale, sepia, inversion, and more
   
   Support for common image formats (e.g., JPEG, PNG)
@@ -14,7 +14,7 @@ photokoshk is a C++ application that applies various filters to images. It lever
 
 ---
 
-# 🛠️ Technologies Used
+## 🛠️ Technologies Used
   C++
   
   stb_image.h
@@ -23,7 +23,7 @@ photokoshk is a C++ application that applies various filters to images. It lever
 
 ---
 
-# 🚀 Getting Started
+## 🚀 Getting Started
   Prerequisites
   C++ compiler (e.g., g++, clang++)
   
@@ -47,21 +47,24 @@ photokoshk is a C++ application that applies various filters to images. It lever
 
 ---
 
-# 🖼️ Sample Output
+## 🖼️ Sample Output
   ![image](https://github.com/user-attachments/assets/42aed531-0274-4181-bf45-1f379b9a68fd)
+
   
   ![image](https://github.com/user-attachments/assets/84d78625-ab0c-43bb-8fba-03292cb277c6)
+
   
   ![image](https://github.com/user-attachments/assets/e66f93b7-6dec-4caa-b788-8e1e3065bb16)
 
+
 ---
 
-# 🤝 Contributing
+## 🤝 Contributing
   Contributions are welcome! If you have suggestions for improvements or new features, feel free to fork the repository and submit a pull request.
 
 ---
 
-# 📄 License
+## 📄 License
   This project is licensed under the MIT License.
   
 ---
